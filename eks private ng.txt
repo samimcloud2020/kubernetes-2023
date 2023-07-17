@@ -1,0 +1,17 @@
+eksctl create nodegroup --cluster=cluster501 \
+                        --region=us-east-1 \
+                        --name=eksdemo1-ng-private1 \
+                        --node-type=t3.medium \
+                        --nodes-min=2 \
+                        --nodes-max=4 \
+                        --node-volume-size=20 \
+                        --ssh-access \
+                        --ssh-public-key=MyKeyFinal \
+                        --managed \
+                        --asg-access \
+                        --external-dns-access \
+                        --full-ecr-access \
+                        --appmesh-access \
+                        --alb-ingress-access \
+                        --node-private-networking \
+                        --subnet-ids=subnet-098d6e7b19b0a9f1d,subnet-057f91ee25dc2a933       

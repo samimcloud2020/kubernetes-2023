@@ -1,0 +1,48 @@
+
+# Use the official PHP image.
+# https://hub.docker.com/_/php
+FROM php:8.0-apache
+
+# Configure PHP for Cloud Run.
+# Precompile PHP code with opcache.
+RUN docker-php-ext-install -j "$(nproc)" opcache
+RUN docker-php-ext-install -j "$(nproc)" pdo pdo_mysql
+
+RUN set -ex; \
+  { \
+    echo "; Cloud Run enforces memory & timeouts"; \
+    echo "memory_limit = -1"; \
+    echo "max_execution_time = 0"; \
+    echo "; File upload at Cloud Run network limit"; \
+    echo "upload_max_filesize = 32M"; \
+    echo "post_max_size = 32M"; \
+    echo "; Configure Opcache for Containers"; \
+    echo "opcache.enable = On"; \
+    echo "opcache.validate_timestamps = Off"; \
+    echo "; Configure Opcache Memory (Application-specific)"; \
+    echo "opcache.memory_consumption = 32"; \
+  } > "$PHP_INI_DIR/conf.d/cloud-run.ini"
+
+# Copy in custom code from the host machine.
+WORKDIR /var/www/html
+COPY . ./
+
+# Use the PORT environment variable in Apache configuration files.
+# https://cloud.google.com/run/docs/reference/container-contract#port
+RUN sed -i 's/80/${PORT}/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
+
+# Configure PHP for development.
+# Switch to the production php.ini for production operations.
+# RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+# https://github.com/docker-library/docs/blob/master/php/README.md#configuration
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+
+
+
+
+
+gcloud run deploy --image   --platform managed --add-cloudsql-instances --set-env-vars CLOUD_SQL_INSTANCE_NAME=
+
+
+https://www.google.com/search?q=cloud+sql+php+connector+for+cloud+run&sxsrf=AJOqlzV5UAUS7z-cHKb6rmF13mI8e_upsA%3A1674827066674&ei=OtXTY4LmKP7nz7sPz-2FmAM&ved=0ahUKEwiC6_mC8ef8AhX-83MBHc92ATMQ4dUDCA8&uact=5&oq=cloud+sql+php+connector+for+cloud+run&gs_lcp=Cgxnd3Mtd2l6LXNlcnAQAzIFCCEQoAEyBAghEBUyCAghEBYQHhAdOgQIABBHOgYIABAWEB46BQgAEIYDOgcIIRCgARAKOgoIIRAWEB4QHRAKOgsIIRAWEB4Q8QQQHUoECEEYAEoECEYYAFDOBli4L2CpMmgAcAJ4AIAB7AGIAckWkgEGMC40LjEwmAEAoAEByAEIwAEB&sclient=gws-wiz-serp#fpstate=ive&vld=cid:70a2cb49,vid:jvZXbJv6qJ4 
