@@ -1,0 +1,9 @@
+$kubectl exec -it <pod name> sh
+# nsllokup < svc name>
+
+ip.<svc name>.<ns>.svc.cluster.local
+
+#cat /etc/resolv.conf
+default.svc.cluster.local      svc.cluster.local    cluster.local
+
+
