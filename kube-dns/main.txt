@@ -1,0 +1,25 @@
+$kubectl get all -n kube-system
+
+got kube-dns pod and kube-dns service.
+
+kube-dns for dns lookup for services.
+
+$kubectl exec -it <pod name> sh
+# cat /etc/resolv.conf
+nameserver <ip of kube-dns>   which lookup auto kube-dns for dns resolver
+
+------------------------------------------------------------------------------------------------------
+#nslookup   <database svc name>
+got private ip of database svc
+
+#nslookup google.com
+
+-----------------------------------------------------------------------------------------------------
+service1(pod) to service2(pod mysql) svc access
+
+$kubectl exec -it <pod name> sh
+#(then install mysql client)
+#apt update && apt install mysql-client    (in alpine image   #apk update && apk add mysql-client)
+#mysql -h <svc name of database> -uroot -p
+password:
+mysql>
